@@ -1,0 +1,26 @@
+version: '3'
+services:
+  db:
+    image: postgres:12.5
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres:/var/lib/postgresql/data
+  db-backup:
+    image: backup
+    build: .
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - S3_REGION=us-west-2
+      - S3_BUCKET=db-backup-develop-overview
+      - S3_PREFIX=backup
+volumes:
+  postgres: ~
